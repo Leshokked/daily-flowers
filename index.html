@@ -52,8 +52,10 @@
   }
 
   * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
   body {
     margin: 0; color: var(--ink);
+    overflow-x: hidden;
     background: var(--paper);
     background-image:
       linear-gradient(var(--grid) 1px, transparent 1px),
@@ -78,13 +80,13 @@
   .editionline { display: flex; justify-content: space-between; font-family: var(--label); font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
 
   /* headline */
-  .headline { display: flex; flex-direction: row; align-items: center; justify-content: space-between; gap: 14px; padding: 2px 0 4px; }
-  .headline-text { display: flex; flex-direction: column; gap: 3px; }
+  .headline { display: flex; flex-direction: row; align-items: center; justify-content: space-between; gap: 14px; padding: 2px 0 4px; flex-wrap: wrap; }
+  .headline-text { display: flex; flex-direction: column; gap: 3px; min-width: 0; flex: 1 1 auto; }
   .jmlogo-lg { width: 74px; height: 82px; }
   @media (prefers-color-scheme: dark) { .jmlogo { filter: invert(1); mix-blend-mode: screen; } }
   :root[data-theme="dark"] .jmlogo { filter: invert(1); mix-blend-mode: screen; }
   :root[data-theme="light"] .jmlogo { filter: none; mix-blend-mode: multiply; }
-  .headline .big { font-family: var(--hand); font-weight: 400; font-size: clamp(40px, 13vw, 58px); line-height: 1.0; letter-spacing: 0; color: var(--green); text-transform: lowercase; }
+  .headline .big { font-family: var(--hand); font-weight: 400; font-size: clamp(26px, 8.5vw, 52px); line-height: 1.02; letter-spacing: 0; color: var(--green); text-transform: lowercase; white-space: nowrap; }
   .headline .big em { font-style: normal; color: var(--lime); }
   .headline .sub { font-family: var(--label); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink); }
   .headline .from { color: var(--green); font-weight: 700; }
@@ -153,7 +155,6 @@
   @media (max-width: 480px) {
     .paper { gap: 10px; padding-top: 16px; }
     .frame { max-width: 300px; margin-left: auto; margin-right: auto; }
-    .headline .big { font-size: clamp(30px, 10vw, 44px); }
   }
 
   @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
