@@ -93,7 +93,7 @@
 
   /* the print */
   .frame { background: var(--frame); border: 1.5px solid var(--rule); box-shadow: var(--shadow); position: relative; }
-  .frame canvas { display: block; width: 100%; height: auto; cursor: pointer; touch-action: pan-y; }
+  .frame canvas { display: block; width: 100%; height: auto; cursor: pointer; touch-action: none; }
   .tape { position: absolute; top: -9px; left: 50%; transform: translateX(-50%) rotate(-1.5deg); width: 92px; height: 18px; background: rgba(187,218,81,.55); border: 1px solid rgba(20,20,20,.25); }
 
   .cap { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; font-family: var(--label); font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-soft); min-height: 13px; padding: 0 1px; }
@@ -481,11 +481,16 @@
   art.addEventListener("pointerdown", function (e) {
     var p = artPoint(e.clientX, e.clientY), idx = -1;
     for (var n = flowers.length - 1; n >= 0; n--) { var f = flowers[n]; if (Math.hypot(f.x - p.x, f.y - p.y) < f.r * 0.9) { idx = n; break; } }
-    if (idx < 0) return; // touched empty space — let the page scroll normally
-    var g = flowers.splice(idx, 1)[0]; flowers.push(g); pick = { f: g, moved: false, sx: e.clientX, sy: e.clientY }; render();
+    if (idx >= 0) { var g = flowers.splice(idx, 1)[0]; flowers.push(g); pick = { f: g, moved: false, sx: e.clientX, sy: e.clientY }; render(); }
+    else { pick = { scroll: true, sy: e.clientY, top0: window.scrollY || window.pageYOffset }; } // empty space — scroll the page by hand
     window.addEventListener("pointermove", onArtMove); window.addEventListener("pointerup", onArtUp); e.preventDefault();
   });
-  function onArtMove(e) { if (!pick) return; if (Math.hypot(e.clientX - pick.sx, e.clientY - pick.sy) > 6) pick.moved = true; if (pick.f && pick.moved) { var p = artPoint(e.clientX, e.clientY); pick.f.x = clamp(p.x, 74, W - 74); pick.f.y = clamp(p.y, 74, NECK.y - 30); render(); } }
+  function onArtMove(e) {
+    if (!pick) return;
+    if (pick.scroll) { window.scrollTo(0, pick.top0 - (e.clientY - pick.sy)); return; }
+    if (Math.hypot(e.clientX - pick.sx, e.clientY - pick.sy) > 6) pick.moved = true;
+    if (pick.f && pick.moved) { var p = artPoint(e.clientX, e.clientY); pick.f.x = clamp(p.x, 74, W - 74); pick.f.y = clamp(p.y, 74, NECK.y - 30); render(); }
+  }
   function onArtUp() { window.removeEventListener("pointermove", onArtMove); window.removeEventListener("pointerup", onArtUp); if (pick && pick.f && !pick.moved) { flowers.pop(); toast("removed"); render(); } pick = null; }
 
   /* dial */
